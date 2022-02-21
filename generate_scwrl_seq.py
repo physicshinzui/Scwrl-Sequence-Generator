@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from re import sub
 from MDAnalysis import Universe
 import argparse
 
@@ -40,16 +39,18 @@ def get_index_of_aa_near_solvent(univ, verbose=False):
     """
     Args:
         univ: Universe object of MDanalysis
+    Return: 
+        seq_index: Index of amino-acid residues around solvent.
+                e.g., Suppose the sequence 'AwD' (w indicates one around solvent). The index of 'w' is 1 (zero-start).
     """
     resi2indx = AAresidue2index(univ)
     near_solvent = univ.select_atoms("(around 4.0 resname HOH ZN* CL* NA*) and protein")
     near_solvent.write('near_solvent.pdb')
-    indices = []
+    seq_index = []
     for residue in near_solvent.residues:
         res = residue.resname+residue.segid+str(residue.resid)
-#        print(res)
-        indices.append(resi2indx[res])
-    return indices
+        seq_index.append(resi2indx[res])
+    return seq_index
 
 def oneline_seq(fasta):
     """
